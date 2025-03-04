@@ -1,6 +1,10 @@
 #[allow(unused_imports)]
 use std::io::{self, Write};
-use std::process::exit;
+use std::{
+    env::{self, Vars},
+    fs::read_dir,
+    process::exit,
+};
 
 enum Cmd<'a> {
     Exit(i32),
@@ -20,8 +24,23 @@ fn main() {
                 println!("{}", args.join(" "))
             }
             Cmd::Type(cmd) => {
+                let path = env::var("PATH").unwrap();
+                let execs: Vec<(&str, String)> = path
+                    .split(':')
+                    .flat_map(|path| {
+                        read_dir(path)
+                            .unwrap()
+                            .map(|x| (path, x.unwrap().file_name().into_string().unwrap()))
+                            .collect::<Vec<(&str, String)>>()
+                    })
+                    .collect();
+
+                let exec_in_path = execs.iter().find(|(_,exec)| exec == cmd);
                 if ["type", "exit", "echo"].contains(&cmd) {
                     println!("{cmd} is a shell builtin");
+                } else if exec_in_path.is_some() {
+                    let (path, cmd) = exec_in_path.unwrap();
+                    println!("{cmd} is {path}{cmd}");
                 } else {
                     println!("{}: not found", cmd);
                 }
