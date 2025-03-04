@@ -5,6 +5,7 @@ use std::process::exit;
 enum Cmd<'a> {
     Exit(i32),
     Echo(Vec<&'a str>),
+    Type(&'a str),
     Invalid,
 }
 
@@ -17,6 +18,13 @@ fn main() {
             Cmd::Invalid => continue,
             Cmd::Echo(args) => {
                 println!("{}", args.join(" "))
+            }
+            Cmd::Type(cmd) => {
+                if ["type", "exit", "echo"].contains(&cmd) {
+                    println!("{cmd} is a shell builtin");
+                } else {
+                    println!("{}: command not found", cmd);
+                }
             }
             Cmd::Exit(x) => exit(x),
         }
@@ -42,9 +50,14 @@ fn handle_user_input<'a>(input: &'a str) -> Cmd<'a> {
             };
 
             Cmd::Exit(exit_code)
-        },
-        "echo" => {
-            Cmd::Echo(args)
+        }
+        "echo" => Cmd::Echo(args),
+        "type" => {
+            if args.len() == 0 || args.len() > 1 {
+                println!("type expects one argument");
+                return Cmd::Invalid;
+            }
+            Cmd::Type(args[0])
         }
         cmd => {
             println!("{}: command not found", cmd);
