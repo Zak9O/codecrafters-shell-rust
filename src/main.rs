@@ -40,7 +40,7 @@ fn main() {
                     println!("{cmd} is a shell builtin");
                 } else if exec_in_path.is_some() {
                     let (path, cmd) = exec_in_path.unwrap();
-                    println!("{cmd} is {path}{cmd}");
+                    println!("{cmd} is {path}/{cmd}");
                 } else {
                     println!("{}: not found", cmd);
                 }
