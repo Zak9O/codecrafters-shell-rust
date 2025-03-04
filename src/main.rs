@@ -23,7 +23,7 @@ fn main() {
                 if ["type", "exit", "echo"].contains(&cmd) {
                     println!("{cmd} is a shell builtin");
                 } else {
-                    println!("{}: command not found", cmd);
+                    println!("{}: not found", cmd);
                 }
             }
             Cmd::Exit(x) => exit(x),
