@@ -1,11 +1,17 @@
 #[allow(unused_imports)]
 use std::io::{self, Write};
+use std::process::exit;
 
 fn main() {
     loop {
         print_leader();
         let input = get_user_input();
-        println!("{}: command not found", input.trim())
+        let input = input.trim();
+        if input == "exit 0" {
+            exit(0);
+        } else {
+            println!("{}: command not found", input.trim())
+        }
     }
 }
 
