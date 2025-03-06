@@ -1,15 +1,16 @@
 #[allow(unused_imports)]
 use std::io::{self, Write};
 use std::{
-    env::{self, Vars},
+    env::{self},
     fs::read_dir,
-    process::exit,
+    process::{exit, Command},
 };
 
 enum Cmd<'a> {
     Exit(i32),
     Echo(Vec<&'a str>),
     Type(&'a str),
+    Custom(&'a str, Vec<&'a str>),
     Invalid,
 }
 
@@ -20,22 +21,24 @@ fn main() {
         let input = handle_user_input(&input);
         match input {
             Cmd::Invalid => continue,
+            Cmd::Custom(cmd, args) => match custom_exec(cmd) {
+                None => {
+                    println!("{}: command not found", cmd);
+                }
+                Some((path, cmd)) => {
+                    let exec_path = format!("{path}/{cmd}");
+                    let output = Command::new(exec_path)
+                        .args(args)
+                        .output()
+                        .expect("Failed executing {exec_path}");
+                    println!("{}", String::from_utf8(output.stdout).unwrap());
+                }
+            },
             Cmd::Echo(args) => {
                 println!("{}", args.join(" "))
             }
             Cmd::Type(cmd) => {
-                let path = env::var("PATH").unwrap();
-                let execs: Vec<(&str, String)> = path
-                    .split(':')
-                    .flat_map(|path| {
-                        read_dir(path)
-                            .unwrap()
-                            .map(|x| (path, x.unwrap().file_name().into_string().unwrap()))
-                            .collect::<Vec<(&str, String)>>()
-                    })
-                    .collect();
-
-                let exec_in_path = execs.iter().find(|(_,exec)| exec == cmd);
+                let exec_in_path = custom_exec(cmd);
                 if ["type", "exit", "echo"].contains(&cmd) {
                     println!("{cmd} is a shell builtin");
                 } else if exec_in_path.is_some() {
@@ -48,6 +51,22 @@ fn main() {
             Cmd::Exit(x) => exit(x),
         }
     }
+}
+
+fn custom_exec(cmd: &str) -> Option<&(&str, String)> {
+    let path = env::var("PATH").unwrap();
+    let execs: Vec<(&str, String)> = path
+        .split(':')
+        .flat_map(|path| {
+            read_dir(path)
+                .unwrap()
+                .map(|x| (path, x.unwrap().file_name().into_string().unwrap()))
+                .collect::<Vec<(&str, String)>>()
+        })
+        .collect();
+
+    let exec_in_path = execs.iter().find(|(_, exec)| exec == cmd);
+    exec_in_path
 }
 
 fn handle_user_input<'a>(input: &'a str) -> Cmd<'a> {
@@ -78,10 +97,7 @@ fn handle_user_input<'a>(input: &'a str) -> Cmd<'a> {
             }
             Cmd::Type(args[0])
         }
-        cmd => {
-            println!("{}: command not found", cmd);
-            Cmd::Invalid
-        }
+        cmd => Cmd::Custom(cmd, args),
     }
 }
 
