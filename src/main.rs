@@ -27,7 +27,7 @@ fn main() {
                 }
                 Some((path, cmd)) => {
                     let exec_path = format!("{path}/{cmd}");
-                    let output = Command::new(exec_path)
+                    let output = Command::new(cmd)
                         .args(args)
                         .output()
                         .expect("Failed executing {exec_path}");
