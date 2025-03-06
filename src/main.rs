@@ -31,7 +31,7 @@ fn main() {
                         .args(args)
                         .output()
                         .expect("Failed executing {exec_path}");
-                    println!("{}", String::from_utf8(output.stdout).unwrap());
+                    print!("{}", String::from_utf8(output.stdout).unwrap());
                 }
             },
             Cmd::Echo(args) => {
