@@ -53,21 +53,46 @@ fn main() {
     }
 }
 
-fn custom_exec(cmd: &str) -> Option<&(&str, String)> {
+fn custom_exec(cmd: &str) -> Option<(String, String)> {
     let path = env::var("PATH").unwrap();
-    let execs: Vec<(&str, String)> = path
+    let execs: Vec<(String, String)> = path
         .split(':')
         .flat_map(|path| {
             read_dir(path)
                 .unwrap()
-                .map(|x| (path, x.unwrap().file_name().into_string().unwrap()))
-                .collect::<Vec<(&str, String)>>()
+                .map(|x| (path.to_string(), x.unwrap().file_name().into_string().unwrap()))
+                .collect::<Vec<(String, String)>>()
         })
         .collect();
 
-    let exec_in_path = execs.iter().find(|(_, exec)| exec == cmd);
+    let exec_in_path = execs.into_iter().find(|(_, exec)| exec == cmd);
     exec_in_path
 }
+
+// fn custom_exec(cmd: &str) -> Option<(String, String)> {
+//     let path = env::var("PATH").ok()?; // Handle missing PATH gracefully
+//
+//     let execs: Vec<(String, String)> = path
+//         .split(':')
+//         .filter_map(|p| {
+//             read_dir(p).ok().map(|entries| {
+//                 entries
+//                     .filter_map(|entry| entry.ok())
+//                     .filter_map(|entry| {
+//                         entry
+//                             .file_name()
+//                             .into_string()
+//                             .ok()
+//                             .map(|name| (p.to_string(), name))
+//                     })
+//                     .collect::<Vec<(String, String)>>()
+//             })
+//         })
+//         .flatten()
+//         .collect();
+//
+//     execs.into_iter().find(|(_, exec)| exec == cmd)
+// }
 
 fn handle_user_input<'a>(input: &'a str) -> Cmd<'a> {
     let mut iter = input.trim().split(' ');
