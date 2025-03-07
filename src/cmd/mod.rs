@@ -12,16 +12,17 @@ pub trait Cmd {
 
 macro_rules! create_builtins {
     ($($name:ident),*) => {
-        // Define the modules
         $(pub mod $name;)*
 
-        // Define the BUILTINS constant as an array of strings
-        pub const BUILTINS: &[&str] = &[$(stringify!($name)),*];
+        // Type is reserved, so it has been hardcoded
+        pub const BUILTINS: &[&str] = &["type", $(stringify!($name)),*];
     };
 }
 
 pub mod custom;
-create_builtins!(echo, exit, pwd, r#type);
+// Type is reserved, so it has been hardcoded
+pub mod r#type;
+create_builtins!(echo, exit, pwd);
 
 pub fn input_to_cmd(input: &str) -> Option<Box<dyn Cmd + '_>> {
     let mut iter = input.trim().split(' ');
@@ -29,9 +30,9 @@ pub fn input_to_cmd(input: &str) -> Option<Box<dyn Cmd + '_>> {
     let args: Vec<&str> = iter.collect();
     let cmd: Box<dyn Cmd> = match cmd {
         "exit" => {
-
             println!("happened");
-            Box::new(Exit::new(args)?)},
+            Box::new(Exit::new(args)?)
+        }
         "echo" => Box::new(Echo::new(args)),
         "type" => Box::new(Type::new(args)?),
         "pwd" => Box::new(Pwd::new()),
