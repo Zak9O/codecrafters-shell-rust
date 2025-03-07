@@ -6,10 +6,11 @@ pub struct Custom<'a>(&'a str, Vec<&'a str>);
 
 impl<'a> Cmd for Custom<'a> {
     fn execute(&self) -> () {
-        Command::new(&self.0)
+        let output = Command::new(&self.0)
             .args(&self.1)
-            .spawn()
+            .output()
             .expect("Failed executing {exec_path}");
+        println!("{}", String::from_utf8(output.stdout).unwrap())
     }
 }
 
