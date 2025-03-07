@@ -9,9 +9,9 @@ enum CmdType {
     Executeable(String),
 }
 
-pub struct Types(CmdType, String);
+pub struct Type(CmdType, String);
 
-impl Cmd for Types {
+impl Cmd for Type {
     fn execute(&self) -> () {
         match self.0 {
             Invalid => println!("{}: not found", self.1),
@@ -21,7 +21,7 @@ impl Cmd for Types {
     }
 }
 
-impl Types {
+impl Type {
     pub fn new(args: Vec<&str>) -> Option<Self> {
         if args.is_empty() || args.len() > 1 {
             println!("type expects one argument");

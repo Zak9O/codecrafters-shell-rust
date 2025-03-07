@@ -2,7 +2,7 @@ use custom::Custom;
 use echo::Echo;
 use exit::Exit;
 use pwd::Pwd;
-use types::Types;
+use r#type::Type;
 
 use crate::custom_executer::is_exec;
 
@@ -21,7 +21,7 @@ macro_rules! create_builtins {
 }
 
 pub mod custom;
-create_builtins!(echo, exit, pwd, types);
+create_builtins!(echo, exit, pwd, r#type);
 
 pub fn input_to_cmd(input: &str) -> Option<Box<dyn Cmd + '_>> {
     let mut iter = input.trim().split(' ');
@@ -33,7 +33,7 @@ pub fn input_to_cmd(input: &str) -> Option<Box<dyn Cmd + '_>> {
             println!("happened");
             Box::new(Exit::new(args)?)},
         "echo" => Box::new(Echo::new(args)),
-        "type" => Box::new(Types::new(args)?),
+        "type" => Box::new(Type::new(args)?),
         "pwd" => Box::new(Pwd::new()),
         cmd => {
             if is_exec(cmd) {
