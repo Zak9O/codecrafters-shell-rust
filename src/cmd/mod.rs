@@ -21,7 +21,7 @@ pub fn input_to_cmd(input: &str) -> Option<Box<dyn Cmd + '_>> {
             if is_exec(cmd) {
                 Box::new(Custom::new(cmd, args))
             } else {
-                println!("{} command not found", cmd);
+                println!("{}: command not found", cmd);
                 return None;
             }
         }
