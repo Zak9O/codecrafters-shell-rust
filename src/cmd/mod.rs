@@ -30,7 +30,6 @@ pub fn input_to_cmd(input: &str) -> Option<Box<dyn Cmd + '_>> {
     let args: Vec<&str> = iter.collect();
     let cmd: Box<dyn Cmd> = match cmd {
         "exit" => {
-            println!("happened");
             Box::new(Exit::new(args)?)
         }
         "echo" => Box::new(Echo::new(args)),
