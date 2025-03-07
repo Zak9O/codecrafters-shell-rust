@@ -10,7 +10,7 @@ impl<'a> Cmd for Custom<'a> {
             .args(&self.1)
             .output()
             .expect("Failed executing {exec_path}");
-        println!("{}", String::from_utf8(output.stdout).unwrap())
+        print!("{}", String::from_utf8(output.stdout).unwrap())
     }
 }
 
