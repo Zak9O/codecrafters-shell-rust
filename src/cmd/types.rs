@@ -16,7 +16,7 @@ impl Cmd for Types {
         match self.0 {
             Invalid => println!("{}: not found", self.1),
             Bultin => println!("{} is a shell builtin", self.1),
-            Executeable(ref full_path) => println!("{} is {}",self.1, full_path),
+            Executeable(ref full_path) => println!("{} is {}", self.1, full_path),
         }
     }
 }
@@ -30,7 +30,7 @@ impl Types {
 
         let cmd = args.first().unwrap().to_string();
         let cmd = match &cmd[..] {
-            "echo" | "exit" | "type" => Self(Bultin, cmd),
+            "pwd" | "echo" | "exit" | "type" => Self(Bultin, cmd),
             _ => match locate(&cmd) {
                 None => Self(Invalid, cmd),
                 Some(full_path) => Self(Executeable(full_path), cmd),
