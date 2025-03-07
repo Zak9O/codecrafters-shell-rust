@@ -1,6 +1,7 @@
 use custom::Custom;
 use echo::Echo;
 use exit::Exit;
+use pwd::Pwd;
 use types::Types;
 
 use crate::custom_executer::is_exec;
@@ -17,6 +18,7 @@ pub fn input_to_cmd(input: &str) -> Option<Box<dyn Cmd + '_>> {
         "exit" => Box::new(Exit::new(args)?),
         "echo" => Box::new(Echo::new(args)),
         "type" => Box::new(Types::new(args)?),
+        "pwd" => Box::new(Pwd::new()),
         cmd => {
             if is_exec(cmd) {
                 Box::new(Custom::new(cmd, args))
@@ -33,3 +35,4 @@ pub mod custom;
 pub mod echo;
 pub mod exit;
 pub mod types;
+pub mod pwd;
