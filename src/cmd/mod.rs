@@ -10,12 +10,28 @@ pub trait Cmd {
     fn execute(&self) -> ();
 }
 
+macro_rules! create_builtins {
+    ($($name:ident),*) => {
+        // Define the modules
+        $(pub mod $name;)*
+
+        // Define the BUILTINS constant as an array of strings
+        pub const BUILTINS: &[&str] = &[$(stringify!($name)),*];
+    };
+}
+
+pub mod custom;
+create_builtins!(echo, exit, pwd, types);
+
 pub fn input_to_cmd(input: &str) -> Option<Box<dyn Cmd + '_>> {
     let mut iter = input.trim().split(' ');
     let cmd = iter.next().unwrap();
     let args: Vec<&str> = iter.collect();
     let cmd: Box<dyn Cmd> = match cmd {
-        "exit" => Box::new(Exit::new(args)?),
+        "exit" => {
+
+            println!("happened");
+            Box::new(Exit::new(args)?)},
         "echo" => Box::new(Echo::new(args)),
         "type" => Box::new(Types::new(args)?),
         "pwd" => Box::new(Pwd::new()),
@@ -30,9 +46,3 @@ pub fn input_to_cmd(input: &str) -> Option<Box<dyn Cmd + '_>> {
     };
     Some(cmd)
 }
-
-pub mod custom;
-pub mod echo;
-pub mod exit;
-pub mod types;
-pub mod pwd;

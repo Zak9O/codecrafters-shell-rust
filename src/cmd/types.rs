@@ -1,6 +1,6 @@
 use crate::custom_executer::locate;
 
-use super::Cmd;
+use super::{Cmd, BUILTINS};
 use CmdType::*;
 
 enum CmdType {
@@ -29,12 +29,13 @@ impl Types {
         }
 
         let cmd = args.first().unwrap().to_string();
-        let cmd = match &cmd[..] {
-            "pwd" | "echo" | "exit" | "type" => Self(Bultin, cmd),
-            _ => match locate(&cmd) {
+        let cmd = if BUILTINS.contains(&&cmd[..]) {
+            Self(Bultin, cmd)
+        } else {
+            match locate(&cmd) {
                 None => Self(Invalid, cmd),
                 Some(full_path) => Self(Executeable(full_path), cmd),
-            },
+            }
         };
         Some(cmd)
     }
