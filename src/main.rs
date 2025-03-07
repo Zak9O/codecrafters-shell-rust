@@ -5,6 +5,9 @@ fn main() {
     loop {
         print_leader();
         let input = get_user_input();
+        if input.trim().is_empty() {
+            continue;
+        }
         let command = input_to_cmd(&input);
         match command {
             None => continue,
