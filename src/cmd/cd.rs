@@ -1,4 +1,4 @@
-use std::env::{self, set_current_dir};
+use std::env::set_current_dir;
 
 use super::Cmd;
 
@@ -7,7 +7,7 @@ pub struct Cd(String);
 impl Cmd for Cd {
     fn execute(&self) -> () {
         if self.0.trim().eq("~") {
-            let path = env::home_dir().unwrap();
+            let path = dirs::home_dir().unwrap();
             let path = path.to_str().unwrap();
             self.set_dir(path);
         } else {
