@@ -9,7 +9,6 @@ impl Cmd for Exit {
     }
 }
 impl Exit {
-
     pub fn new_empty() -> Self {
         Self(0)
     }

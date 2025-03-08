@@ -13,7 +13,7 @@ impl Cmd for Pwd {
 }
 
 impl Pwd {
-    pub fn new() -> Self {
-        Self
+    pub fn new(_: Vec<&str>) -> Option<Self> {
+        Some(Self)
     }
 }
