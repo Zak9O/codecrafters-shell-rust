@@ -1,4 +1,4 @@
-use std::env::set_current_dir;
+use std::env::{self, set_current_dir};
 
 use super::Cmd;
 
@@ -6,9 +6,12 @@ pub struct Cd(String);
 
 impl Cmd for Cd {
     fn execute(&self) -> () {
-        match set_current_dir(&self.0) {
-            Ok(_) => (),
-            Err(_) => println!("cd: {}: No such file or directory", self.0)
+        if self.0.trim().eq("~") {
+            let path = env::home_dir().unwrap();
+            let path = path.to_str().unwrap();
+            self.set_dir(path);
+        } else {
+            self.set_dir(&self.0);
         }
     }
 }
@@ -22,5 +25,10 @@ impl Cd {
         let path = args[0];
         Some(Cd(path.to_string()))
     }
+    fn set_dir(&self, path: &str) -> () {
+        match set_current_dir(path) {
+            Ok(_) => (),
+            Err(_) => println!("cd: {}: No such file or directory", self.0),
+        }
+    }
 }
-
