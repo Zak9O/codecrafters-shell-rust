@@ -1,3 +1,4 @@
+use cd::Cd;
 use custom::Custom;
 use echo::Echo;
 use exit::Exit;
@@ -49,4 +50,4 @@ macro_rules! create_builtins {
 pub mod custom;
 // Type is reserved, so it has been hardcoded
 pub mod r#type;
-create_builtins!(echo, exit, pwd);
+create_builtins!(echo, exit, pwd, cd);
