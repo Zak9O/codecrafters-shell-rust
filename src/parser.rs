@@ -7,6 +7,7 @@ pub struct Parser {
     is_inside_apo: bool,
     is_indisde_dapo: bool,
     is_first_char: bool,
+    is_escaped: bool,
 }
 
 impl Parser {
@@ -18,6 +19,7 @@ impl Parser {
             is_inside_apo: false,
             is_indisde_dapo: false,
             is_first_char: true,
+            is_escaped: false,
         }
     }
 
@@ -53,14 +55,21 @@ impl Parser {
         Ok(input)
     }
 
+    fn is_in_block(&self) -> bool {
+        self.is_inside_apo || self.is_indisde_dapo
+    }
+
     fn parse_input(&mut self, input: &str) -> bool {
         for ele in input.as_bytes() {
             match ele {
+                _ if self.is_escaped => {
+                    self.current_token.push(*ele);
+                    self.is_escaped = false;
+                }
+                b'\\' if !self.is_in_block() => self.is_escaped = true,
                 b'\'' if !self.is_indisde_dapo => self.is_inside_apo = !self.is_inside_apo,
                 b'\"' if !self.is_inside_apo => self.is_indisde_dapo = !self.is_indisde_dapo,
-                b' ' | b'\n'
-                    if !self.is_inside_apo && !self.is_indisde_dapo && !self.is_first_char =>
-                {
+                b' ' | b'\n' if !self.is_in_block() && !self.is_first_char => {
                     self.is_first_char = true;
                     let current_token_str = String::from_utf8(self.current_token.clone()).unwrap();
                     if self.cmd.is_empty() {
