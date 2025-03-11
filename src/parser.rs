@@ -73,6 +73,7 @@ impl Parser {
                         continue;
                     }
                     self.current_token.push(*ele);
+                    self.is_first_char = false;
                 }
             }
         }
