@@ -18,7 +18,6 @@ fn main() {
     }
 }
 fn handle_input(input: &str) -> (String, Vec<String>) {
-    println!("{:?}", input);
     let (cmd, args, _, _) = input.as_bytes().iter().fold(
         (String::new(), Vec::new(), Vec::new(), false),
         |(cmd, mut args, mut current_token, is_inside_apo), ele| match ele {
@@ -39,7 +38,6 @@ fn handle_input(input: &str) -> (String, Vec<String>) {
         },
     );
     let args = args.into_iter().filter(|x| !x.is_empty()).collect();
-    println!("({cmd},{:?})", args);
     (cmd, args)
 }
 
