@@ -58,7 +58,9 @@ impl Parser {
             match ele {
                 b'\'' if !self.is_indisde_dapo => self.is_inside_apo = !self.is_inside_apo,
                 b'\"' if !self.is_inside_apo => self.is_indisde_dapo = !self.is_indisde_dapo,
-                b' ' | b'\n' if !self.is_inside_apo && !self.is_indisde_dapo => {
+                b' ' | b'\n'
+                    if !self.is_inside_apo && !self.is_indisde_dapo && !self.is_first_char =>
+                {
                     self.is_first_char = true;
                     let current_token_str = String::from_utf8(self.current_token.clone()).unwrap();
                     if self.cmd.is_empty() {
