@@ -99,3 +99,4 @@ impl Parser {
         io::stdout().flush().unwrap();
     }
 }
+
