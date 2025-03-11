@@ -63,7 +63,8 @@ impl Parser {
         for ele in input.as_bytes() {
             match ele {
                 _ if self.is_escaped => {
-                    if (self.is_indisde_dapo && ![b'\"', b'\\', b'$'].contains(ele)) || self.is_inside_apo {
+                    let is_ele_special_char = [b'\"', b'\\', b'$'].contains(ele);
+                    if (self.is_indisde_dapo && !is_ele_special_char) || self.is_inside_apo {
                         self.current_token.push(b'\\');
                     } 
                     self.current_token.push(*ele);
