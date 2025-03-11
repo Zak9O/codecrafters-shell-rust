@@ -63,7 +63,7 @@ impl Parser {
         for ele in input.as_bytes() {
             match ele {
                 _ if self.is_escaped => {
-                    if !(self.is_in_block() && [b'\"', b'\\', b'$'].contains(ele)) {
+                    if !(self.is_in_block() || [b'\"', b'\\', b'$'].contains(ele)) {
                         self.current_token.push(b'\\');
                     }
                     self.current_token.push(*ele);
