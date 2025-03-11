@@ -19,10 +19,7 @@ macro_rules! create_builtins {
         // Type is reserved, so it has been hardcoded
         pub const BUILTINS: &[&str] = &["type", $(stringify!($name)),*];
 
-        pub fn input_to_cmd(input: &str) -> Option<Box<dyn Cmd + '_>> {
-            let mut iter = input.trim().split(' ');
-            let cmd = iter.next().unwrap();
-            let args: Vec<&str> = iter.collect();
+        pub fn input_to_cmd<'a>(cmd: &'a str, args: &'a Vec<String>) -> Option<Box<dyn Cmd + 'a>> {
             // Consider adding the below to macro as well
             let cmd: Box<dyn Cmd> = match cmd {
                 "type" => Box::new(Type::new(args)?),

@@ -9,11 +9,7 @@ impl Cmd for Exit {
     }
 }
 impl Exit {
-    pub fn new_empty() -> Self {
-        Self(0)
-    }
-
-    pub fn new(args: Vec<&str>) -> Option<Self> {
+    pub fn new(args: &Vec<String>) -> Option<Self> {
         if args.len() == 0 || args.len() > 1 {
             println!("exit expects one integer argument");
             return None;

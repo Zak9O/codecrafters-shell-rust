@@ -17,12 +17,12 @@ impl Cmd for Cd {
 }
 
 impl Cd {
-    pub fn new(args: Vec<&str>) -> Option<Self> {
+    pub fn new(args: &Vec<String>) -> Option<Self> {
         if args.len() == 0 || args.len() > 1 {
             println!("cd expects one argument");
             return None;
         }
-        let path = args[0];
+        let path = &args[0];
         Some(Cd(path.to_string()))
     }
     fn set_dir(&self, path: &str) -> () {

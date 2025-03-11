@@ -9,13 +9,13 @@ pub fn locate(cmd: &str) -> Option<String> {
     path.split(':')
         .find(|path| {
             read_dir(path)
-                .unwrap_or_else(|_| panic!("There was a problem reading {}", path))
-                .find(|f| {
-                    f.as_ref()
-                        .map(|entry| entry.file_name().into_string().unwrap() == cmd)
-                        .unwrap_or(false)
+                .ok()
+                .map(|entries| {
+                    entries
+                        .filter_map(Result::ok) // Skip any entries that have errors
+                        .any(|entry| entry.file_name().into_string().unwrap_or_default() == cmd)
                 })
-                .is_some()
+                .unwrap_or(false) // If read_dir failed, return false for this path
         })
         .map(|x| format!("{x}/{cmd}"))
 }

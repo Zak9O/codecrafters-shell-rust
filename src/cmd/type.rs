@@ -22,7 +22,7 @@ impl Cmd for Type {
 }
 
 impl Type {
-    pub fn new(args: Vec<&str>) -> Option<Self> {
+    pub fn new(args: &Vec<String>) -> Option<Self> {
         if args.is_empty() || args.len() > 1 {
             println!("type expects one argument");
             return None;
