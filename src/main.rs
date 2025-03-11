@@ -4,11 +4,11 @@ use std::io::{self, Write};
 
 fn main() {
     loop {
-        let input = get_user_input();
-        if input.trim().is_empty() {
+        let result = get_input();
+        if result.is_none() {
             continue;
         }
-        let (cmd, args) = handle_input(&input);
+        let (cmd, args) = result.unwrap();
 
         let command = input_to_cmd(&cmd, &args);
         match command {
@@ -17,6 +17,15 @@ fn main() {
         }
     }
 }
+
+fn get_input() -> Option<(String, Vec<String>)> {
+    let input = get_user_input();
+    if input.trim().is_empty() {
+        return None;
+    }
+    Some(handle_input(&input))
+}
+
 fn handle_input(input: &str) -> (String, Vec<String>) {
     let (cmd, args, _, _) = input.as_bytes().iter().fold(
         (String::new(), Vec::new(), Vec::new(), false),
