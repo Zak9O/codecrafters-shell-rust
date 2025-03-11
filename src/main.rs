@@ -11,7 +11,6 @@ fn main() {
                 eprintln!("Error: Invalid UTF-8 data")
             }
             Ok((cmd, args)) => {
-                println!("({cmd}, {:?})", args);
                 let command = input_to_cmd(&cmd, &args);
                 match command {
                     None => continue,
