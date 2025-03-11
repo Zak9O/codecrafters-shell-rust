@@ -63,10 +63,13 @@ impl Parser {
         for ele in input.as_bytes() {
             match ele {
                 _ if self.is_escaped => {
+                    if !(self.is_in_block() && [b'\"', b'\\', b'$'].contains(ele)) {
+                        self.current_token.push(b'\\');
+                    }
                     self.current_token.push(*ele);
                     self.is_escaped = false;
                 }
-                b'\\' if !self.is_in_block() => self.is_escaped = true,
+                b'\\' => self.is_escaped = true,
                 b'\'' if !self.is_indisde_dapo => self.is_inside_apo = !self.is_inside_apo,
                 b'\"' if !self.is_inside_apo => self.is_indisde_dapo = !self.is_indisde_dapo,
                 b' ' | b'\n' if !self.is_in_block() && !self.is_first_char => {
