@@ -25,7 +25,7 @@ fn main() {
                         _ => String::new(),
                     };
                     let mut file = File::create_new(file_name).expect("Could not create file");
-                    file.write(output.as_bytes()).expect("Could not write to file");
+                    file.write(output.trim().as_bytes()).expect("Could not write to file");
                 }
             },
             _ => (),
