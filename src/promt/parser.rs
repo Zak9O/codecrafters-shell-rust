@@ -39,7 +39,7 @@ impl Parser {
                 continue;
             }
             let ele = bytes.get(i).unwrap();
-            let next_element = bytes.get(i);
+            let next_element = bytes.get(i+1);
             match ele {
                 _ if self.is_escaped => {
                     let is_ele_special_char = [b'\"', b'\\', b'$'].contains(ele);
