@@ -28,7 +28,7 @@ fn main() {
                     file.write(output.trim().as_bytes()).expect("Could not write to file");
                 }
             },
-            _ => (),
+            _ => (), 
         }
     }
 }
