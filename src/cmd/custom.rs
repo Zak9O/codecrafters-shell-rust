@@ -5,12 +5,12 @@ use super::Cmd;
 pub struct Custom<'a>(&'a str, &'a Vec<String>);
 
 impl<'a> Cmd for Custom<'a> {
-    fn execute(&self) -> () {
+    fn execute(&self) -> Option<String> {
         let output = Command::new(&self.0)
             .args(self.1)
             .output()
             .expect("Failed executing {exec_path}");
-        print!("{}", String::from_utf8(output.stdout).unwrap())
+        Some( String::from_utf8(output.stdout).unwrap())
     }
 }
 

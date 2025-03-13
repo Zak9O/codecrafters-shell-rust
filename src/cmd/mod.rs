@@ -9,7 +9,7 @@ use r#type::Type;
 use crate::custom_executer::is_exec;
 
 pub trait Cmd {
-    fn execute(&self) -> ();
+    fn execute(&self) -> Option<String>;
 }
 
 macro_rules! create_builtins {

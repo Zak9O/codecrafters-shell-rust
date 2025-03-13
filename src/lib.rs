@@ -1,3 +1,3 @@
 pub mod cmd;
-pub mod parser;
+pub mod promt;
 mod custom_executer;

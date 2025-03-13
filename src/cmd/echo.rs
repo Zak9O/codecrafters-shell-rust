@@ -7,7 +7,7 @@ impl<'a> Echo<'a> {
     }
 }
 impl<'a> Cmd for Echo<'a> {
-    fn execute(&self) -> () {
-        println!("{}", self.0.join(" "))
+    fn execute(&self) -> Option<String> {
+        Some(self.0.join(" "))
     }
 }

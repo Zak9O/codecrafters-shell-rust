@@ -4,7 +4,7 @@ use super::Cmd;
 
 pub struct Exit(i32);
 impl Cmd for Exit {
-    fn execute(&self) -> () {
+    fn execute(&self) -> Option<String> {
         exit(self.0)
     }
 }

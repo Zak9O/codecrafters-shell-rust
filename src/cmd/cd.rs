@@ -5,7 +5,7 @@ use super::Cmd;
 pub struct Cd(String);
 
 impl Cmd for Cd {
-    fn execute(&self) -> () {
+    fn execute(&self) -> Option<String> {
         if self.0.trim().eq("~") {
             let path = dirs::home_dir().unwrap();
             let path = path.to_str().unwrap();
@@ -13,6 +13,7 @@ impl Cmd for Cd {
         } else {
             self.set_dir(&self.0);
         }
+        None
     }
 }
 

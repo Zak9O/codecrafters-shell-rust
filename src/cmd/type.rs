@@ -12,11 +12,11 @@ enum CmdType {
 pub struct Type(CmdType, String);
 
 impl Cmd for Type {
-    fn execute(&self) -> () {
+    fn execute(&self) -> Option<String> {
         match self.0 {
-            Invalid => println!("{}: not found", self.1),
-            Bultin => println!("{} is a shell builtin", self.1),
-            Executeable(ref full_path) => println!("{} is {}", self.1, full_path),
+            Invalid => Some(self.1.clone()),
+            Bultin => Some(self.1.clone()),
+            Executeable(ref full_path) => Some(format!("{} is {}", self.1, full_path)),
         }
     }
 }
