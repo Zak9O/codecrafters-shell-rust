@@ -75,7 +75,7 @@ impl Parser {
                     };
                     self.current_token.clear();
                 }
-                b'1' if next_element.is_some_and(|x| *x == b'>') && !self.is_in_block() => {
+                b'1' | b'2' if next_element.is_some_and(|x| *x == b'>') && !self.is_in_block() => {
                     self.handle_redirect(*ele)?
                 }
                 b'>' if !self.is_in_block() => self.handle_redirect(*ele)?,
