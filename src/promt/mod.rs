@@ -20,8 +20,14 @@ pub enum UserInput {
 
 #[derive(Clone)]
 pub enum RedirectType {
-    Stdin,
-    Stderr
+    New(OutputType),
+    Append(OutputType),
+}
+
+#[derive(Clone)]
+pub enum OutputType {
+    Stdout,
+    Stderr,
 }
 
 pub struct Promt {

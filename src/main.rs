@@ -5,7 +5,7 @@ use std::{
 
 use codecrafters_shell::{
     cmd::{input_to_cmd, StdOutput},
-    promt::{Command, Promt, RedirectType, UserInput},
+    promt::{Command, OutputType, Promt, RedirectType, UserInput},
 };
 
 fn main() {
@@ -24,14 +24,24 @@ fn main() {
                         cmd.map(|x| x.execute(&mut std_output));
                     }
                     UserInput::Redirect(Command(cmd, args), redirect_type, file_name) => {
-                        let file_handle =
-                            Box::new(File::create_new(file_name).expect("Could not create file"));
                         match redirect_type {
-                            RedirectType::Stdin => {
-                                std_output.0 = file_handle;
+                            RedirectType::New(std_out) => {
+                                let file_handle = Box::new(
+                                    File::create_new(file_name).expect("Could not create file"),
+                                );
+                                match std_out {
+                                    OutputType::Stdout => std_output.0 = file_handle,
+                                    OutputType::Stderr => std_output.1 = file_handle,
+                                }
                             }
-                            RedirectType::Stderr => {
-                                std_output.1 = file_handle;
+                            RedirectType::Append(std_out) => {
+                                let file_handle = Box::new(
+                                    File::open(&file_name).or_else(|_| File::create(file_name)).unwrap(),
+                                );
+                                match std_out {
+                                    OutputType::Stdout => std_output.0 = file_handle,
+                                    OutputType::Stderr => std_output.1 = file_handle,
+                                }
                             }
                         }
 

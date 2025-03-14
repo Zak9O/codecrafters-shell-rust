@@ -2,8 +2,6 @@ use std::io::{Error, ErrorKind};
 
 use super::{Command, RedirectType, UserInput};
 
-
-
 pub struct Parser {
     user_input: UserInput,
     current_token: Vec<u8>,
@@ -39,7 +37,8 @@ impl Parser {
                 continue;
             }
             let ele = bytes.get(i).unwrap();
-            let next_element = bytes.get(i+1);
+            let next_element = bytes.get(i + 1);
+            let next_next_element = bytes.get(i + 2);
             match ele {
                 _ if self.is_escaped => {
                     let is_ele_special_char = [b'\"', b'\\', b'$'].contains(ele);
@@ -75,10 +74,20 @@ impl Parser {
                     };
                     self.current_token.clear();
                 }
-                b'1' | b'2' if next_element.is_some_and(|x| *x == b'>') && !self.is_in_block() => {
-                    self.handle_redirect(*ele)?
+                b'1' | b'2'
+                    if next_element.is_some_and(|x| *x == b'>')
+                        && next_next_element.is_some_and(|x| *x == b'>')
+                        && !self.is_in_block() =>
+                {
+                    self.handle_redirect(*ele, false)?
                 }
-                b'>' if !self.is_in_block() => self.handle_redirect(*ele)?,
+                b'>' if next_element.is_some_and(|x| *x == b'>') && !self.is_in_block() => {
+                    self.handle_redirect(*ele, false)?
+                }
+                b'1' | b'2' if next_element.is_some_and(|x| *x == b'>') && !self.is_in_block() => {
+                    self.handle_redirect(*ele, true)?
+                }
+                b'>' if !self.is_in_block() => self.handle_redirect(*ele, true)?,
                 _ => {
                     if self.is_first_char_in_token && *ele == b' ' {
                         continue;
@@ -95,7 +104,7 @@ impl Parser {
         }
     }
 
-    fn handle_redirect(&mut self, ele: u8) -> Result<(), Error> {
+    fn handle_redirect(&mut self, ele: u8, new: bool) -> Result<(), Error> {
         self.skip = true;
         let cmd = match &self.user_input {
             UserInput::Redirect(_, _, _) => {
@@ -104,8 +113,22 @@ impl Parser {
             UserInput::Command(cmd) => cmd,
         };
         let redirect_type = match ele {
-            b'1' | b'>' => RedirectType::Stdin,
-            b'2' => RedirectType::Stderr,
+            b'1' | b'>' => {
+                let x = super::OutputType::Stdout;
+                if new {
+                    RedirectType::New(x)
+                } else {
+                    RedirectType::Append(x)
+                }
+            }
+            b'2' => {
+                let x = super::OutputType::Stderr;
+                if new {
+                    RedirectType::New(x)
+                } else {
+                    RedirectType::Append(x)
+                }
+            }
             _ => unreachable!(),
         };
         self.user_input = UserInput::Redirect(cmd.clone(), redirect_type, String::new());
