@@ -1,14 +1,14 @@
 use std::env::current_dir;
 
-use super::Cmd;
+use super::{Cmd, StdOutput};
 
 pub struct Pwd;
 
 impl Cmd for Pwd {
-    fn execute(&self) -> Option<String> {
+    fn execute(&self, StdOutput(stdout,_): &mut StdOutput) -> () {
         let binding = current_dir().unwrap();
         let pwd = binding.to_str().unwrap();
-        Some(pwd.to_string())
+        stdout.write(pwd.as_bytes()).unwrap();
     }
 }
 

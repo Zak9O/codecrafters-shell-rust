@@ -1,10 +1,10 @@
 use std::process::exit;
 
-use super::Cmd;
+use super::{Cmd, StdOutput};
 
 pub struct Exit(i32);
 impl Cmd for Exit {
-    fn execute(&self) -> Option<String> {
+    fn execute(&self, _: &mut StdOutput) -> () {
         exit(self.0)
     }
 }

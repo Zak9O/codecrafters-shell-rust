@@ -76,9 +76,9 @@ impl Parser {
                     self.current_token.clear();
                 }
                 b'1' if next_element.is_some_and(|x| *x == b'>') && !self.is_in_block() => {
-                    self.is(*ele)?
+                    self.handle_redirect(*ele)?
                 }
-                b'>' if !self.is_in_block() => self.is(*ele)?,
+                b'>' if !self.is_in_block() => self.handle_redirect(*ele)?,
                 _ => {
                     if self.is_first_char_in_token && *ele == b' ' {
                         continue;
@@ -95,7 +95,7 @@ impl Parser {
         }
     }
 
-    fn is(&mut self, ele: u8) -> Result<(), Error> {
+    fn handle_redirect(&mut self, ele: u8) -> Result<(), Error> {
         self.skip = true;
         let cmd = match &self.user_input {
             UserInput::Redirect(_, _, _) => {
@@ -105,6 +105,7 @@ impl Parser {
         };
         let redirect_type = match ele {
             b'1' | b'>' => RedirectType::Stdin,
+            b'2' => RedirectType::Stderr,
             _ => unreachable!(),
         };
         self.user_input = UserInput::Redirect(cmd.clone(), redirect_type, String::new());

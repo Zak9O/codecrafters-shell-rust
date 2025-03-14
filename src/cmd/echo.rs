@@ -1,4 +1,4 @@
-use super::Cmd;
+use super::{Cmd, StdOutput};
 
 pub struct Echo<'a>(&'a Vec<String>);
 impl<'a> Echo<'a> {
@@ -7,7 +7,7 @@ impl<'a> Echo<'a> {
     }
 }
 impl<'a> Cmd for Echo<'a> {
-    fn execute(&self) -> Option<String> {
-        Some(self.0.join(" "))
+    fn execute(&self, StdOutput(stdout,_): &mut StdOutput) -> () {
+        stdout.write(self.0.join(" ").as_bytes()).unwrap();
     }
 }

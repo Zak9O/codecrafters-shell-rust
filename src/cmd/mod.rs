@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use cd::Cd;
 use custom::Custom;
 use echo::Echo;
@@ -8,8 +10,16 @@ use r#type::Type;
 
 use crate::custom_executer::is_exec;
 
+pub struct StdOutput(pub Box<dyn Write>, pub Box<dyn Write>);
+impl StdOutput {
+    pub fn flush(mut self) -> () {
+        self.0.flush().unwrap();
+        self.1.flush().unwrap();
+    }
+}
+
 pub trait Cmd {
-    fn execute(&self) -> Option<String>;
+    fn execute(&self, std_output: &mut StdOutput) -> ();
 }
 
 macro_rules! create_builtins {

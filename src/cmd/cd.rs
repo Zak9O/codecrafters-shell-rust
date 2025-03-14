@@ -1,11 +1,11 @@
 use std::env::set_current_dir;
 
-use super::Cmd;
+use super::{Cmd, StdOutput};
 
 pub struct Cd(String);
 
 impl Cmd for Cd {
-    fn execute(&self) -> Option<String> {
+    fn execute(&self, _: &mut StdOutput) -> () {
         if self.0.trim().eq("~") {
             let path = dirs::home_dir().unwrap();
             let path = path.to_str().unwrap();
@@ -13,7 +13,6 @@ impl Cmd for Cd {
         } else {
             self.set_dir(&self.0);
         }
-        None
     }
 }
 

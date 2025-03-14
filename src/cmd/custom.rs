@@ -1,16 +1,16 @@
 use std::process::Command;
 
-use super::Cmd;
-
+use super::{Cmd, StdOutput};
 pub struct Custom<'a>(&'a str, &'a Vec<String>);
 
 impl<'a> Cmd for Custom<'a> {
-    fn execute(&self) -> Option<String> {
+    fn execute(&self, StdOutput(stdout, stderr): &mut StdOutput) -> () {
         let output = Command::new(&self.0)
             .args(self.1)
             .output()
             .expect("Failed executing {exec_path}");
-        Some( String::from_utf8(output.stdout).unwrap())
+        stdout.write(&output.stdout).unwrap();
+        stderr.write(&output.stderr).unwrap();
     }
 }
 

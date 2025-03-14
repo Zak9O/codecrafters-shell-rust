@@ -1,6 +1,6 @@
 use crate::custom_executer::locate;
 
-use super::{Cmd, BUILTINS};
+use super::{Cmd, StdOutput, BUILTINS};
 use CmdType::*;
 
 enum CmdType {
@@ -12,12 +12,14 @@ enum CmdType {
 pub struct Type(CmdType, String);
 
 impl Cmd for Type {
-    fn execute(&self) -> Option<String> {
+    fn execute(&self, StdOutput(stdout, _): &mut StdOutput) -> () {
         match self.0 {
-            Invalid => Some(self.1.clone()),
-            Bultin => Some(self.1.clone()),
-            Executeable(ref full_path) => Some(format!("{} is {}", self.1, full_path)),
-        }
+            Invalid => stdout.write(self.1.as_bytes()).unwrap(),
+            Bultin => stdout.write(self.1.as_bytes()).unwrap(),
+            Executeable(ref full_path) => stdout
+                .write(format!("{} is {}", self.1, full_path).as_bytes())
+                .unwrap(),
+        };
     }
 }
 

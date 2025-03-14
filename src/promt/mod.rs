@@ -21,6 +21,7 @@ pub enum UserInput {
 #[derive(Clone)]
 pub enum RedirectType {
     Stdin,
+    Stderr
 }
 
 pub struct Promt {
