@@ -1,5 +1,5 @@
 use std::{
-    fs::File,
+    fs::{File, OpenOptions},
     io::{self, ErrorKind},
 };
 
@@ -36,7 +36,11 @@ fn main() {
                             }
                             RedirectType::Append(std_out) => {
                                 let file_handle = Box::new(
-                                    File::open(&file_name).or_else(|_| File::create(file_name)).unwrap(),
+                                    OpenOptions::new()
+                                        .write(true)
+                                        .append(true)
+                                        .open(file_name)
+                                        .unwrap(),
                                 );
                                 match std_out {
                                     OutputType::Stdout => std_output.0 = file_handle,
