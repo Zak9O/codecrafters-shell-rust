@@ -9,8 +9,14 @@ impl<'a> Cmd for Custom<'a> {
             .args(self.1)
             .output()
             .expect("Failed executing {exec_path}");
-        stdout.write(&output.stdout).unwrap();
-        stderr.write(&output.stderr).unwrap();
+        if !output.stdout.is_empty() {
+            stdout.write(&output.stdout).unwrap();
+            stdout.write(b"\n").unwrap();
+        }
+        if !output.stderr.is_empty() {
+            stderr.write(&output.stderr).unwrap();
+            stderr.write(b"\n").unwrap();
+        }
     }
 }
 

@@ -9,6 +9,7 @@ impl Cmd for Pwd {
         let binding = current_dir().unwrap();
         let pwd = binding.to_str().unwrap();
         stdout.write(pwd.as_bytes()).unwrap();
+        stdout.write(b"\n").unwrap();
     }
 }
 

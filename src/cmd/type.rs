@@ -20,6 +20,7 @@ impl Cmd for Type {
                 .write(format!("{} is {}", self.1, full_path).as_bytes())
                 .unwrap(),
         };
+        stdout.write(b"\n").unwrap();
     }
 }
 

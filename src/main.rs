@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{self, ErrorKind, Write},
+    io::{self, ErrorKind},
 };
 
 use codecrafters_shell::{
@@ -43,6 +43,5 @@ fn main() {
             }
             _ => (),
         }
-        println!("");
     }
 }

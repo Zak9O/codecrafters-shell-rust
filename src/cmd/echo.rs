@@ -9,5 +9,6 @@ impl<'a> Echo<'a> {
 impl<'a> Cmd for Echo<'a> {
     fn execute(&self, StdOutput(stdout,_): &mut StdOutput) -> () {
         stdout.write(self.0.join(" ").as_bytes()).unwrap();
+        stdout.write(b"\n").unwrap();
     }
 }
