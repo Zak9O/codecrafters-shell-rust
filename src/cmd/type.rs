@@ -14,8 +14,12 @@ pub struct Type(CmdType, String);
 impl Cmd for Type {
     fn execute(&self, StdOutput(stdout, _): &mut StdOutput) -> () {
         match self.0 {
-            Invalid => stdout.write(self.1.as_bytes()).unwrap(),
-            Bultin => stdout.write(self.1.as_bytes()).unwrap(),
+            Invalid => stdout
+                .write(format!("{}: not found", self.1).as_bytes())
+                .unwrap(),
+            Bultin => stdout
+                .write(format!("{} is a shell builtin", self.1).as_bytes())
+                .unwrap(),
             Executeable(ref full_path) => stdout
                 .write(format!("{} is {}", self.1, full_path).as_bytes())
                 .unwrap(),
