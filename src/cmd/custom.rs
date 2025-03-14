@@ -8,14 +8,18 @@ impl<'a> Cmd for Custom<'a> {
         let output = Command::new(&self.0)
             .args(self.1)
             .output()
-            .expect("Failed executing {exec_path}");
+            .expect("Failed executing");
         if !output.stdout.is_empty() {
             stdout.write(&output.stdout).unwrap();
-            stdout.write(b"\n").unwrap();
+            if Some(&b'\n') != output.stdout.last() {
+                stdout.write(b"\n").unwrap();
+            }
         }
         if !output.stderr.is_empty() {
             stderr.write(&output.stderr).unwrap();
-            stderr.write(b"\n").unwrap();
+            if Some(&b'\n') != output.stderr.last() {
+                stderr.write(b"\n").unwrap();
+            }
         }
     }
 }
