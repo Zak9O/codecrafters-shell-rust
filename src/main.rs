@@ -39,6 +39,7 @@ fn main() {
                                     OpenOptions::new()
                                         .write(true)
                                         .append(true)
+                                        .create(true)
                                         .open(file_name)
                                         .unwrap(),
                                 );
