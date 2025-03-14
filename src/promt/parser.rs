@@ -9,7 +9,7 @@ pub struct Parser {
     is_indisde_dapo_block: bool,
     is_first_char_in_token: bool,
     is_escaped: bool,
-    skip: bool,
+    skip: usize,
 }
 
 impl Parser {
@@ -21,7 +21,7 @@ impl Parser {
             is_indisde_dapo_block: false,
             is_first_char_in_token: true,
             is_escaped: false,
-            skip: false,
+            skip: 0,
         }
     }
 
@@ -32,13 +32,13 @@ impl Parser {
     pub fn parse(&mut self, input: &str) -> Result<UserInput, Error> {
         let bytes = input.as_bytes();
         for i in 0..bytes.len() {
-            if self.skip {
-                self.skip = false;
-                continue;
-            }
             let ele = bytes.get(i).unwrap();
             let next_element = bytes.get(i + 1);
             let next_next_element = bytes.get(i + 2);
+            if self.skip > 0 {
+                self.skip -= 1;
+                continue;
+            }
             match ele {
                 _ if self.is_escaped => {
                     let is_ele_special_char = [b'\"', b'\\', b'$'].contains(ele);
@@ -105,7 +105,11 @@ impl Parser {
     }
 
     fn handle_redirect(&mut self, ele: u8, new: bool) -> Result<(), Error> {
-        self.skip = true;
+        if new {
+            self.skip = 1;
+        } else {
+            self.skip = 2;
+        }
         let cmd = match &self.user_input {
             UserInput::Redirect(_, _, _) => {
                 return Err(Error::new(ErrorKind::InvalidData, "Input cannot be passed"))
