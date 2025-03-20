@@ -18,13 +18,13 @@ fn main() {
                 eprintln!("Error: Invalid UTF-8 data")
             }
             Ok(user_input) => {
+                println!("{:?}", user_input);
                 match user_input {
                     UserInput::Command(Command(cmd, args)) => {
                         let cmd = input_to_cmd(&cmd, &args);
                         cmd.map(|x| x.execute(&mut std_output));
                     }
                     UserInput::Redirect(Command(cmd, args), redirect_type, file_name) => {
-                        println!("{:?}", user_input);
                         match redirect_type {
                             RedirectType::New(std_out) => {
                                 let file_handle = Box::new(
