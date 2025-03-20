@@ -35,6 +35,7 @@ fn main() {
                                 }
                             }
                             RedirectType::Append(std_out) => {
+                                println!("trying to append to file");
                                 let file_handle = Box::new(
                                     OpenOptions::new()
                                         .write(true)
