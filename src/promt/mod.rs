@@ -71,11 +71,53 @@ impl Promt {
         }
     }
 
-    fn promt_for_input(&self) -> Result<String, Error> {
-        let mut input = String::new();
-        let stdin = io::stdin();
-        stdin.read_line(&mut input)?;
-        Ok(input)
+    fn prompt_for_input(&mut self) -> Result<bool, Error> {
+        let _ = crossterm::terminal::enable_raw_mode();
+        let mut stdout = io::stdout();
+        let mut tab_pressed = false;
+
+        loop {
+            match crossterm::event::read()? {
+                Event::Key(event) => match event.code {
+                    KeyCode::Char('c')
+                        if event.modifiers.contains(event::KeyModifiers::CONTROL) =>
+                    {
+                        let _ = crossterm::terminal::disable_raw_mode();
+                        exit(1);
+                    }
+                    KeyCode::Tab => {
+                        tab_pressed = true;
+                        let _ = crossterm::terminal::disable_raw_mode();
+                        break;
+                    }
+                    KeyCode::Enter => {
+                        let _ = crossterm::terminal::disable_raw_mode();
+                        self.input.push('\n');
+                        println!("");
+                        break;
+                    }
+                    KeyCode::Backspace => {
+                        if self.input.is_empty() {
+                            continue;
+                        }
+                        self.input.pop();
+                        execute!(
+                            stdout,
+                            crossterm::cursor::MoveLeft(1),
+                            crossterm::style::Print(' '),
+                            crossterm::cursor::MoveLeft(1)
+                        )?
+                    }
+                    KeyCode::Char(c) => {
+                        self.input.push(c);
+                        execute!(stdout, crossterm::style::Print(c))?
+                    }
+                    _ => continue,
+                },
+                _ => continue,
+            }
+        }
+        return Ok(tab_pressed);
     }
 
     fn print_leader(&self, symbol: char) {
