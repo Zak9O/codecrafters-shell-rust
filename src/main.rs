@@ -18,7 +18,6 @@ fn main() {
                 eprintln!("Error: Invalid UTF-8 data")
             }
             Ok(user_input) => {
-                println!("{:?}", user_input);
                 match user_input {
                     UserInput::Command(Command(cmd, args)) => {
                         let cmd = input_to_cmd(&cmd, &args);
@@ -40,7 +39,6 @@ fn main() {
                                 }
                             }
                             RedirectType::Append(std_out) => {
-                                println!("trying to append to file");
                                 let file_handle = Box::new(
                                     OpenOptions::new()
                                         .write(true)
