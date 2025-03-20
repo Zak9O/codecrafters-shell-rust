@@ -1,6 +1,6 @@
 use std::{
-    fs::{File, OpenOptions},
-    io::{self, ErrorKind},
+    fs::{create_dir_all, File, OpenOptions},
+    io::{self, ErrorKind}, path::Path,
 };
 
 use codecrafters_shell::{
@@ -25,6 +25,10 @@ fn main() {
                         cmd.map(|x| x.execute(&mut std_output));
                     }
                     UserInput::Redirect(Command(cmd, args), redirect_type, file_name) => {
+                        
+                        if let Some(parent) = Path::new(&file_name).parent() {
+                            create_dir_all(parent).unwrap(); 
+                        }
                         match redirect_type {
                             RedirectType::New(std_out) => {
                                 let file_handle = Box::new(
