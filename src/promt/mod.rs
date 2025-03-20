@@ -50,21 +50,22 @@ impl Promt {
         }
     }
 
-    fn tab_press(&self) -> String {
+    fn auto_complete(&self) -> String {
         let token = self.token();
         let candidates: Vec<&str> = BUILTINS
             .iter()
             .filter(|&x| x.starts_with(&*token))
             .map(|x| *x)
             .collect();
-        let mut letters = String::new();
+        let mut added_letters = String::new();
         if candidates.len() == 1 {
             let candidate = candidates[0];
             let (start, end) = (token.len(), candidate.len());
-            letters.push_str(&candidate[start..end]);
+            added_letters.push_str(&candidate[start..end]);
+            added_letters.push(' ');
         }
 
-        letters
+        added_letters
     }
 
     fn token(&self) -> &String {
@@ -94,7 +95,7 @@ impl Promt {
         }
 
         if tab_pressed {
-            let letters = self.tab_press();
+            let letters = self.auto_complete();
             let token = self.token_mut();
             token.push_str(&letters);
             return self.promt(&letters);
