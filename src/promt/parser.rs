@@ -29,7 +29,7 @@ impl Parser {
         self.is_inside_apo_block || self.is_indisde_dapo_block
     }
 
-    pub fn parse(&mut self, input: &str) -> Result<UserInput, Error> {
+    pub fn parse(mut self, input: &str) -> Result<UserInput, Error> {
         let bytes = input.as_bytes();
         for i in 0..bytes.len() {
             let ele = bytes.get(i).unwrap();
