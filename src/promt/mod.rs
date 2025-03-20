@@ -13,7 +13,7 @@ use crate::cmd::BUILTINS;
 
 mod parser;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Command(pub String, pub Vec<String>);
 impl Command {
     fn new() -> Self {
@@ -21,19 +21,19 @@ impl Command {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum UserInput {
     Command(Command),
     Redirect(Command, RedirectType, String),
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum RedirectType {
     New(OutputType),
     Append(OutputType),
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum OutputType {
     Stdout,
     Stderr,
