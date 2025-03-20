@@ -145,10 +145,10 @@ impl Promt {
                         break;
                     }
                     KeyCode::Backspace => {
-                        if self.input.is_empty() {
+                        if input.is_empty() {
                             continue;
                         }
-                        self.input.pop();
+                        input.pop();
                         execute!(
                             stdout,
                             crossterm::cursor::MoveLeft(1),
