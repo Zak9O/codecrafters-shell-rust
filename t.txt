@@ -1,11 +1,1 @@
-Cargo.lock
-Cargo.toml
-README.md
-codecrafters.yml
-push_to_code_crafters.sh
-src
-t.txt
-target
-test.txt
-your_program.sh
-ls: cannot access 'asdlakdj': No such file or directory
+
