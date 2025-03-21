@@ -138,10 +138,12 @@ impl Promt {
                         let _ = crossterm::terminal::disable_raw_mode();
                         break;
                     }
-                    KeyCode::Enter => {
-                        let _ = crossterm::terminal::disable_raw_mode();
-                        input.push('\n');
-                        println!("");
+                    KeyCode::Char('j') if event.modifiers.contains(KeyModifiers::CONTROL) => {
+                        handle_EOF(&mut input);
+                        break;
+                    }
+                    KeyCode::Enter | KeyCode::Char('\n') => {
+                        handle_EOF(&mut input);
                         break;
                     }
                     KeyCode::Backspace => {
@@ -173,4 +175,10 @@ impl Promt {
         print!("{leader}");
         io::stdout().flush().unwrap();
     }
+}
+
+fn handle_EOF(input: &mut String) {
+    let _ = crossterm::terminal::disable_raw_mode();
+    input.push('\n');
+    println!("");
 }
