@@ -69,10 +69,20 @@ impl Promt {
         candidates.sort();
         candidates.dedup();
 
+        let is_prefix_of_all = candidates
+            .first()
+            .is_some_and(|x| candidates.iter().all(|y| y.starts_with(x)));
+
         let mut added_letters = String::new();
         match candidates.len() {
             0 => print!("{}", '\x07'),
             1 => {
+                let candidate = candidates[0];
+                let (start, end) = (token.len(), candidate.len());
+                added_letters.push_str(&candidate[start..end]);
+                added_letters.push(' ');
+            }
+            _ if is_prefix_of_all => {
                 let candidate = candidates[0];
                 let (start, end) = (token.len(), candidate.len());
                 added_letters.push_str(&candidate[start..end]);
