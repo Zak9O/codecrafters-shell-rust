@@ -41,16 +41,18 @@ pub enum OutputType {
 
 pub struct Promt {
     input: Vec<String>,
+    is_auto_complete_extra: bool,
 }
 
 impl Promt {
     pub fn new() -> Self {
         Self {
             input: vec![String::new()],
+            is_auto_complete_extra: false,
         }
     }
 
-    fn auto_complete(&self) -> String {
+    fn auto_complete(&mut self) -> String {
         let token = self.token();
         let execs: Vec<String> = custom_executer::execs_in_path();
         let mut auto_complete_candidates = execs.iter().map(|x| x.as_str()).collect::<Vec<&str>>();
@@ -76,7 +78,20 @@ impl Promt {
                 added_letters.push_str(&candidate[start..end]);
                 added_letters.push(' ');
             }
-            _ => (),
+            _ if self.is_auto_complete_extra => {
+                added_letters.push('\n');
+                for ele in candidates {
+                    added_letters.push_str(&format!("{ele}  "));
+                }
+                added_letters.push('\n');
+                added_letters.push_str("$ ");
+                added_letters.push_str(&self.input.join(""));
+
+            }
+            _ => {
+                self.is_auto_complete_extra = true;
+                print!("{}", '\x07');
+            }
         }
 
         added_letters
@@ -161,6 +176,7 @@ impl Promt {
                         break;
                     }
                     KeyCode::Backspace => {
+                        self.is_auto_complete_extra = false;
                         if input.is_empty() {
                             continue;
                         }
@@ -174,7 +190,8 @@ impl Promt {
                     }
                     KeyCode::Char(c) => {
                         input.push(c);
-                        execute!(stdout, crossterm::style::Print(c))?
+                        execute!(stdout, crossterm::style::Print(c))?;
+                        self.is_auto_complete_extra = false;
                     }
                     _ => continue,
                 },
