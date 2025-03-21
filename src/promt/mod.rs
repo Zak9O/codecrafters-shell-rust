@@ -80,13 +80,12 @@ impl Promt {
             }
             _ if self.is_auto_complete_extra => {
                 added_letters.push('\n');
-                for ele in candidates {
-                    added_letters.push_str(&format!("{ele}  "));
+                for ele in &candidates {
+                    added_letters.push_str(&format!("{}  ", *ele));
                 }
                 added_letters.push('\n');
                 added_letters.push_str("$ ");
                 added_letters.push_str(&self.input.join(""));
-
             }
             _ => {
                 self.is_auto_complete_extra = true;
@@ -150,6 +149,7 @@ impl Promt {
     }
 
     fn prompt_for_input(&mut self) -> Result<bool, Error> {
+        let is_same_input = !self.input.last().unwrap().ends_with('\n');
         let mut input = String::new();
         let _ = crossterm::terminal::enable_raw_mode();
         let mut stdout = io::stdout();
@@ -198,7 +198,13 @@ impl Promt {
                 _ => continue,
             }
         }
-        self.input.push(input);
+        if is_same_input {
+            let mut latest = self.input.pop().unwrap();
+            latest.push_str(&input);
+            self.input.push(latest);
+        } else {
+            self.input.push(input);
+        }
         return Ok(tab_pressed);
     }
 
