@@ -86,7 +86,6 @@ impl Promt {
                 let candidate = candidates[0];
                 let (start, end) = (token.len(), candidate.len());
                 added_letters.push_str(&candidate[start..end]);
-                added_letters.push(' ');
             }
             _ if self.is_auto_complete_extra => {
                 added_letters.push('\n');
