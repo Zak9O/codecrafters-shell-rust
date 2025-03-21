@@ -58,11 +58,15 @@ impl Promt {
             .map(|x| *x)
             .collect();
         let mut added_letters = String::new();
-        if candidates.len() == 1 {
-            let candidate = candidates[0];
-            let (start, end) = (token.len(), candidate.len());
-            added_letters.push_str(&candidate[start..end]);
-            added_letters.push(' ');
+        match candidates.len() {
+            0 => print!("{}", '\x07'),
+            1 => {
+                let candidate = candidates[0];
+                let (start, end) = (token.len(), candidate.len());
+                added_letters.push_str(&candidate[start..end]);
+                added_letters.push(' ');
+            },
+            _ => ()
         }
 
         added_letters
@@ -139,11 +143,11 @@ impl Promt {
                         break;
                     }
                     KeyCode::Char('j') if event.modifiers.contains(KeyModifiers::CONTROL) => {
-                        handle_EOF(&mut input);
+                        handle_eof(&mut input);
                         break;
                     }
                     KeyCode::Enter | KeyCode::Char('\n') => {
-                        handle_EOF(&mut input);
+                        handle_eof(&mut input);
                         break;
                     }
                     KeyCode::Backspace => {
@@ -177,7 +181,7 @@ impl Promt {
     }
 }
 
-fn handle_EOF(input: &mut String) {
+fn handle_eof(input: &mut String) {
     let _ = crossterm::terminal::disable_raw_mode();
     input.push('\n');
     println!("");
