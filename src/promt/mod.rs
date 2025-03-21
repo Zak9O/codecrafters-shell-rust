@@ -9,7 +9,7 @@ use crossterm::{
 };
 use parser::Parser;
 
-use crate::cmd::BUILTINS;
+use crate::{cmd::BUILTINS, custom_executer};
 
 mod parser;
 
@@ -52,11 +52,21 @@ impl Promt {
 
     fn auto_complete(&self) -> String {
         let token = self.token();
-        let candidates: Vec<&str> = BUILTINS
+        let execs: Vec<String> = custom_executer::execs_in_path();
+        let mut auto_complete_candidates = execs.iter().map(|x| x.as_str()).collect::<Vec<&str>>();
+        let mut builtins = BUILTINS.to_vec();
+        auto_complete_candidates.append(&mut builtins);
+
+        let mut candidates: Vec<&str> = auto_complete_candidates
             .iter()
             .filter(|&x| x.starts_with(&*token))
             .map(|x| *x)
             .collect();
+
+        // Removes duplicates
+        candidates.sort();
+        candidates.dedup();
+
         let mut added_letters = String::new();
         match candidates.len() {
             0 => print!("{}", '\x07'),
@@ -65,8 +75,8 @@ impl Promt {
                 let (start, end) = (token.len(), candidate.len());
                 added_letters.push_str(&candidate[start..end]);
                 added_letters.push(' ');
-            },
-            _ => ()
+            }
+            _ => (),
         }
 
         added_letters
